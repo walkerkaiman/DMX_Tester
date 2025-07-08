@@ -1,5 +1,6 @@
 import tkinter as tk
-from tkinter import ttk, scrolledtext
+from tkinter import ttk
+from tkinter.scrolledtext import ScrolledText
 import serial
 import serial.tools.list_ports
 import threading
@@ -101,13 +102,13 @@ class DMXTesterApp:
         log_frame = ttk.LabelFrame(main_frame, text="DMX Stream Log")
         log_frame.pack(fill="both", expand=False, padx=5, pady=5)
 
-        self.log_box = scrolledtext.ScrolledText(log_frame, height=10, width=90, state="disabled")
+        self.log_box = ScrolledText(log_frame, height=10, width=90, state="disabled")
         self.log_box.pack(fill="both", expand=True, padx=5, pady=5)
 
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
 
     def refresh_ports(self):
-        ports = serial.tools.list_ports.comports()
+        ports = list(serial.tools.list_ports.comports())
         self.port_dropdown['values'] = [port.device for port in ports]
         if ports:
             self.port_dropdown.current(0)
@@ -159,9 +160,8 @@ class DMXTesterApp:
             while self.running:
                 try:
                     if self.protocol == "Serial" and self.serial_port and self.serial_port.is_open:
-                        self.serial_port.break_condition = True
-                        time.sleep(0.001)
                         self.serial_port.break_condition = False
+                        time.sleep(0.001)
                         self.serial_port.write(self.dmx_buffer)
                     elif self.protocol == "Art-Net":
                         self.send_artnet()

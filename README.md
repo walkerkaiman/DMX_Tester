@@ -1,126 +1,60 @@
-# 🛠️ DMX Diagnostic Tool (Serial / Art-Net / sACN)
+# DMX Tester Program
 
-This tool is a desktop GUI application for testing and debugging DMX output across **USB Serial**, **Art-Net**, and **sACN (E1.31)** protocols. It allows you to control all 512 DMX channels using sliders and visualize output in real-time with logging.
+The DMX Tester program is a Python application that allows users to test DMX lighting controls. It provides a user-friendly interface for controlling DMX output through various protocols such as Serial, Art-Net, and sACN.
 
----
+## Features
 
-## 🔧 Features
+- Supports sending DMX signals over Serial, Art-Net, and sACN protocols.
+- Adjustable sliders for setting DMX channel values.
+- Real-time log of DMX stream status.
 
-- ✅ 512 DMX sliders with real-time value updates
-- ✅ Output via:
-  - **USB Serial** (DMX over FTDI adapters, Teensy, etc.)
-  - **Art-Net** (UDP broadcast or unicast to a node)
-  - **sACN (E1.31)** (multicast streaming or optional unicast)
-- ✅ Fixed-width, scrollable GUI optimized for quick hands-on testing
-- ✅ Live logging of DMX output (first 16 channels previewed per frame)
-- ✅ Protocol-specific fields auto-show/hide
-- ✅ 30 FPS DMX transmission (adjustable in code)
+## How to Use
 
----
+1. Select the desired output protocol (Serial, Art-Net, sACN) from the drop-down menu.
+2. Based on the selected protocol, provide the necessary configuration details such as the COM port for Serial, Node IP for Art-Net, or Universe for sACN.
+3. Adjust the sliders to set the values for each DMX channel (1-512).
+4. Click the "Connect" button to establish the connection and start sending DMX signals.
+5. The log box displays the current DMX stream status, including any errors.
 
-## 📦 Installation
+## Installation Instructions
 
-### 🔁 Dependencies
+### Windows
 
-Install Python 3.8+ and the following packages:
+1. Install Python: Download and install Python from the official [Python website](https://www.python.org/).
+2. Install required libraries: Open Command Prompt and run the following commands:
+   ```
+   pip install tk
+   pip install pyserial
+   ```
+3. Download the DMX Tester program code.
+4. Run the program by executing the `DMX_Tester.py` script.
 
-```bash
-pip install pyserial
+### macOS
 
-sACN and Art-Net use only standard Python libraries (socket, struct)
+1. Install Homebrew: Open Terminal and run the following command to install Homebrew:
+   ```
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
+2. Install Python and required libraries: Run the following commands in Terminal:
+   ```
+   brew install python-tk
+   pip install pyserial
+   ```
+3. Download the DMX Tester program code.
+4. Run the program by executing the `DMX_Tester.py` script.
 
-🚀 How to Run
-python dmx_tester.py
+### Linux
 
-🖥️ GUI Overview
-Section	Description
-Protocol Dropdown	Choose Serial, Art-Net, or sACN
-COM Port / IP Fields	Auto-filled or user-input depending on protocol
-Universe Selector	For Art-Net and sACN (0–255 supported)
-512 Channel Sliders	Drag to control each DMX value
-Live Console	Displays outgoing DMX values (1–16) every second
+1. Install Python and Tkinter:
+   - Ubuntu/Debian: `sudo apt-get install python3-tk`
+   - CentOS/RHEL: `sudo yum install python3-tkinter`
+2. Install required libraries: Open terminal and run the following command:
+   ```
+   pip install pyserial
+   ```
+3. Download the DMX Tester program code.
+4. Run the program by executing the `DMX_Tester.py` script.
 
-🧪 Common Use Cases
-🔌 1. Verifying USB-to-DMX Adapters
-Use the Serial option:
+## Credits
 
-Select COM port for your FTDI/RS485 device
-
-Adjust sliders
-
-Confirm fixture responds or observe DMX LED
-
-🌐 2. Testing Art-Net Nodes
-Use the Art-Net option:
-
-Enter node IP address
-
-Set correct universe
-
-Confirm light responds
-
-Useful for:
-
-LED controllers
-
-Media servers
-
-GrandMA/Onyx/Resolume previsualization
-
-🛰️ 3. Validating sACN Fixtures (E1.31)
-Use the sACN option:
-
-Enter universe
-
-Multicast to 239.255.0.X automatically
-
-For architectural lighting and theatrical installs
-
-Works with:
-
-Pathway nodes
-
-ETC/Obsidian/ColorSource gear
-
-LED pixel controllers
-
-🧠 Pro Tips
-You don’t need to enter an IP for sACN — it auto-sends to the correct multicast address
-
-If your fixture isn’t responding:
-
-Double check universe
-
-Verify DMX mode and start address
-
-Use the console window to confirm values being sent
-
-If using Serial, ensure no other app (like Unity or QLC+) is holding the COM port
-
-🚨 Known Limitations
-Only supports 1 universe at a time
-
-No ArtPoll/ArtSync (advanced Art-Net commands)
-
-sACN is sender-only (no receiver/debug listener yet)
-
-🧰 Built With
-Python 3
-
-Tkinter (GUI)
-
-pyserial (USB COM)
-
-socket + struct (for Art-Net and sACN)
-
-💡 Created For
-This tool was designed to support:
-
-Lighting professionals testing installs on-site
-
-Developers debugging DMX output
-
-Engineers integrating microcontrollers with DMX fixtures
-
-Artists prototyping interactive DMX behaviors
-```
+This DMX Tester program was created by Kaiman Walker.
