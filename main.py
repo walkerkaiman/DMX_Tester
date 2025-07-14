@@ -15,9 +15,9 @@ class DMXTesterApp:
         self.serial_port = None
         self.running = False
         self.dmx_buffer = bytearray(513)
-        self.dmx_buffer[0] = 0x00
+        self.dmx_buffer[0] = 0x00  # Start code
         self.last_log_time = 0
-        self.baudrate = 250000
+        self.baudrate = 57600  # Match UltraDMX MAX
         self.protocol = "Serial"
         self.artnet_ip = "127.0.0.1"
         self.universe = 0
@@ -52,7 +52,7 @@ class DMXTesterApp:
 
         self.universe_label = ttk.Label(port_frame, text="Universe:")
         self.universe_var = tk.IntVar(value=0)
-        self.universe_dropdown = ttk.Combobox(port_frame, textvariable=self.universe_var, width=5, values=list(range(256)))
+        self.universe_dropdown = ttk.Combobox(port_frame, textvariable=self.universe_var, width=5, values=[str(i) for i in range(256)])
         self.universe_dropdown.current(0)
 
         self.connect_button = ttk.Button(port_frame, text="Connect", command=self.connect_output)
@@ -111,7 +111,10 @@ class DMXTesterApp:
         ports = list(serial.tools.list_ports.comports())
         self.port_dropdown['values'] = [port.device for port in ports]
         if ports:
-            self.port_dropdown.current(0)
+            if "COM5" in [port.device for port in ports]:
+                self.port_dropdown.set("COM5")
+            else:
+                self.port_dropdown.current(0)
 
     def update_output_fields(self, event=None):
         selection = self.protocol_var.get()
@@ -142,7 +145,7 @@ class DMXTesterApp:
 
         if self.protocol == "Serial":
             try:
-                self.serial_port = serial.Serial(self.port_var.get(), self.baudrate)
+                self.serial_port = serial.Serial(self.port_var.get(), self.baudrate, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_TWO, timeout=1)
                 self.log(f"[CONNECTED] Serial on {self.port_var.get()}")
             except Exception as e:
                 self.log(f"[ERROR] Serial connect: {e}")
@@ -160,9 +163,16 @@ class DMXTesterApp:
             while self.running:
                 try:
                     if self.protocol == "Serial" and self.serial_port and self.serial_port.is_open:
-                        self.serial_port.break_condition = False
-                        time.sleep(0.001)
-                        self.serial_port.write(self.dmx_buffer)
+                        packet = bytearray()
+                        packet.append(0x7E)
+                        packet.append(0x06)
+                        data_length = 513
+                        packet.append(data_length & 0xFF)
+                        packet.append((data_length >> 8) & 0xFF)
+                        packet.append(0x00)
+                        packet += self.dmx_buffer[1:]
+                        packet.append(0xE7)
+                        self.serial_port.write(packet)
                     elif self.protocol == "Art-Net":
                         self.send_artnet()
                     elif self.protocol == "sACN":
@@ -182,9 +192,9 @@ class DMXTesterApp:
 
     def send_artnet(self):
         header = bytearray(b'Art-Net\x00') + bytearray([0x00, 0x50]) + bytearray([0x00, 14])
-        header += bytearray([0x00, 0x00])  # sequence + physical
-        header += struct.pack('<H', self.universe)  # little-endian universe
-        header += struct.pack('>H', 512)  # big-endian length
+        header += bytearray([0x00, 0x00])
+        header += struct.pack('<H', self.universe)
+        header += struct.pack('>H', 512)
         packet = header + self.dmx_buffer[1:]
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.sendto(packet, (self.artnet_ip, 6454))
@@ -223,10 +233,21 @@ class DMXTesterApp:
         if self.serial_port and self.serial_port.is_open:
             for i in range(1, 513):
                 self.dmx_buffer[i] = 0
-            self.serial_port.write(self.dmx_buffer)
+            packet = bytearray()
+            packet.append(0x7E)
+            packet.append(0x06)
+            data_length = 513
+            packet.append(data_length & 0xFF)
+            packet.append((data_length >> 8) & 0xFF)
+            packet.append(0x00)
+            packet += self.dmx_buffer[1:]
+            packet.append(0xE7)
+            self.serial_port.write(packet)
+            time.sleep(0.1)
             self.serial_port.close()
         self.root.destroy()
 
-root = tk.Tk()
-app = DMXTesterApp(root)
-root.mainloop()
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = DMXTesterApp(root)
+    root.mainloop()

@@ -4,17 +4,19 @@ The DMX Tester program is a Python application that allows users to test DMX lig
 
 ## Features
 
-- Supports sending DMX signals over Serial, Art-Net, and sACN protocols.
-- Adjustable sliders for setting DMX channel values.
-- Real-time log of DMX stream status.
+- Supports sending DMX signals over Serial, Art-Net, and sACN protocols
+- Adjustable sliders for setting DMX channel values (1-512)
+- Real-time log of DMX stream status
+- Auto-detects COM ports and prefers COM5 if available
 
 ## How to Use
 
-1. Select the desired output protocol (Serial, Art-Net, sACN) from the drop-down menu.
-2. Based on the selected protocol, provide the necessary configuration details such as the COM port for Serial, Node IP for Art-Net, or Universe for sACN.
-3. Adjust the sliders to set the values for each DMX channel (1-512).
-4. Click the "Connect" button to establish the connection and start sending DMX signals.
-5. The log box displays the current DMX stream status, including any errors.
+1. **Connect your USB DMX dongle** to your computer
+2. **Select "Serial"** protocol from the drop-down menu
+3. **Choose the correct COM port** (COM5 or whatever port your dongle uses)
+4. **Click "Connect"** to establish the connection
+5. **Use the sliders** to set values for each DMX channel (1-512)
+6. **Monitor the log box** for connection status and DMX stream information
 
 ## Installation Instructions
 
@@ -27,7 +29,7 @@ The DMX Tester program is a Python application that allows users to test DMX lig
    pip install pyserial
    ```
 3. Download the DMX Tester program code.
-4. Run the program by executing the `DMX_Tester.py` script.
+4. Run the program by executing the `main.py` script.
 
 ### macOS
 
@@ -41,7 +43,7 @@ The DMX Tester program is a Python application that allows users to test DMX lig
    pip install pyserial
    ```
 3. Download the DMX Tester program code.
-4. Run the program by executing the `DMX_Tester.py` script.
+4. Run the program by executing the `main.py` script.
 
 ### Linux
 
@@ -53,7 +55,15 @@ The DMX Tester program is a Python application that allows users to test DMX lig
    pip install pyserial
    ```
 3. Download the DMX Tester program code.
-4. Run the program by executing the `DMX_Tester.py` script.
+4. Run the program by executing the `main.py` script.
+
+## Troubleshooting
+
+### Connection Issues
+- Make sure your USB DMX dongle is properly connected
+- Check Device Manager to confirm the COM port assignment
+- Ensure no other DMX software is running simultaneously
+- Try selecting a different COM port if available
 
 ## Credits
 
